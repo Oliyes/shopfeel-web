@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-
+import AdminDashboard from "./components/AdminDashboard";
 import { apiRequest } from "./services/api";
 
 function App() {
@@ -121,7 +121,17 @@ function App() {
     setPassword("");
   }
 
-
+if (
+  user &&
+  user.access_level === "ADMIN"
+) {
+  return (
+    <AdminDashboard
+      user={user}
+      logout={logout}
+    />
+  );
+}
   if (user) {
     return (
       <main className="logged-page">

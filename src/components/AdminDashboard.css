@@ -1,0 +1,526 @@
+.admin-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  background: #f3f2ef;
+  color: #2d2b2b;
+}
+
+/* MENU LATERAL */
+
+.admin-sidebar {
+  min-height: 100vh;
+  background: #faf9f7;
+  border-right: 1px solid #d7d3d3;
+
+  padding: 32px 0 24px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-brand-kicker {
+  display: block;
+
+  padding: 0 24px;
+
+  font-size: 9px;
+  letter-spacing: 0.18em;
+
+  color: #79561f;
+}
+
+.admin-brand {
+  margin: 4px 0 35px;
+
+  padding: 0 24px;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 27px;
+  font-weight: 400;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-nav-button {
+  width: 100%;
+
+  padding: 12px 23px;
+
+  border: 0;
+  border-left: 2px solid transparent;
+
+  background: transparent;
+
+  text-align: left;
+
+  font-size: 14px;
+
+  color: #77716b;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.admin-nav-button:hover {
+  color: #2d2b2b;
+
+  background: rgba(182, 130, 53, 0.05);
+}
+
+.admin-nav-button.active {
+  color: #79561f;
+
+  border-left-color: #b68235;
+
+  background: rgba(182, 130, 53, 0.08);
+}
+
+/* CONTA */
+
+.admin-account {
+  margin-top: auto;
+
+  padding: 22px 24px 0;
+
+  border-top: 1px solid #d7d3d3;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.admin-account strong {
+  font-size: 11px;
+}
+
+.admin-account span {
+  font-size: 10px;
+
+  color: #77716b;
+}
+
+.admin-account button {
+  margin-top: 10px;
+
+  width: fit-content;
+
+  border: 0;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: #79561f;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}
+
+/* CONTEÚDO */
+
+.admin-main {
+  padding: 45px 52px;
+
+  min-width: 0;
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  padding-bottom: 25px;
+
+  margin-bottom: 27px;
+
+  border-bottom: 1px solid #d7d3d3;
+}
+
+.admin-header h2 {
+  margin: 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 38px;
+  font-weight: 400;
+
+  letter-spacing: -0.02em;
+}
+
+.admin-header p {
+  margin: 8px 0 0;
+
+  color: #77716b;
+
+  font-size: 13px;
+}
+
+/* BOTÃO NOVO PRODUTO */
+
+.admin-action-button {
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border: 1px solid #b68235;
+
+  border-radius: 4px;
+
+  background: transparent;
+
+  color: #79561f;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.admin-action-button:hover {
+  background: #fff3e4;
+}
+
+/* MÉTRICAS */
+
+.admin-metrics {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 38px;
+}
+
+.admin-metric {
+  min-height: 140px;
+
+  padding: 20px;
+
+  border: 1px solid #d7d3d3;
+
+  display: flex;
+  flex-direction: column;
+
+  background: rgba(250, 249, 247, 0.45);
+}
+
+.admin-metric > span {
+  font-size: 10px;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+
+  color: #79561f;
+}
+
+.admin-metric strong {
+  margin: 17px 0 5px;
+
+  font-family: Georgia, serif;
+
+  font-size: 39px;
+
+  font-weight: 400;
+}
+
+.admin-metric small {
+  color: #77716b;
+}
+
+/* GRID */
+
+.admin-dashboard-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(250px, 0.65fr);
+
+  gap: 35px;
+}
+
+.admin-section-label {
+  display: block;
+
+  margin-bottom: 14px;
+
+  font-size: 10px;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+
+  color: #77716b;
+}
+
+/* TABELAS */
+
+.admin-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 13px;
+}
+
+.admin-table th {
+  padding: 11px 10px;
+
+  border-bottom: 1px solid #d7d3d3;
+
+  text-align: left;
+
+  color: #77716b;
+
+  font-size: 10px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.1em;
+}
+
+.admin-table td {
+  padding: 14px 10px;
+
+  border-bottom: 1px solid #d7d3d3;
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(182, 130, 53, 0.04);
+}
+
+.product-name {
+  display: block;
+
+  font-family: Georgia, serif;
+
+  font-size: 15px;
+
+  font-weight: 400;
+}
+
+.product-description {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #77716b;
+
+  font-size: 11px;
+}
+
+.admin-tag {
+  display: inline-block;
+
+  padding: 4px 8px;
+
+  border: 1px solid #d7d3d3;
+
+  border-radius: 3px;
+
+  font-size: 10px;
+
+  text-transform: uppercase;
+}
+
+.table-actions button {
+  border: 0;
+
+  background: transparent;
+
+  color: #79561f;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}
+
+.empty-table {
+  padding: 30px;
+
+  text-align: center;
+
+  color: #77716b;
+
+  border-bottom: 1px solid #d7d3d3;
+}
+
+/* HUMORES */
+
+.admin-mood-list {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.admin-mood-item {
+  display: grid;
+
+  grid-template-columns: 40px 1fr;
+
+  gap: 10px;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #d7d3d3;
+}
+
+.admin-mood-item > span {
+  font-family: Georgia, serif;
+
+  color: #79561f;
+}
+
+.admin-mood-item div {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.admin-mood-item strong {
+  font-family: Georgia, serif;
+
+  font-weight: 400;
+}
+
+.admin-mood-item small {
+  color: #77716b;
+}
+
+.admin-moods-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(230px, 1fr));
+
+  gap: 18px;
+}
+
+.admin-mood-card {
+  min-height: 180px;
+
+  padding: 18px;
+
+  border: 1px solid #d7d3d3;
+
+  border-left: 3px solid #b68235;
+}
+
+.admin-mood-card > span {
+  color: #79561f;
+
+  font-size: 10px;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.admin-mood-card h3 {
+  margin: 17px 0 9px;
+
+  font-family: Georgia, serif;
+
+  font-size: 22px;
+
+  font-weight: 400;
+}
+
+.admin-mood-card p {
+  margin: 0;
+
+  color: #77716b;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+}
+
+/* VAZIO */
+
+.admin-empty {
+  padding: 45px;
+
+  border: 1px dashed #d7d3d3;
+
+  text-align: center;
+
+  color: #77716b;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 950px) {
+  .admin-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-page {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    min-height: auto;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+
+    overflow-x: auto;
+  }
+
+  .admin-nav-button {
+    width: auto;
+
+    white-space: nowrap;
+
+    border-left: 0;
+
+    border-bottom: 2px solid transparent;
+  }
+
+  .admin-nav-button.active {
+    border-left: 0;
+
+    border-bottom-color: #b68235;
+  }
+
+  .admin-account {
+    display: none;
+  }
+
+  .admin-main {
+    padding: 28px 20px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+  }
+}
