@@ -121,17 +121,24 @@ function App() {
     setPassword("");
   }
 
-if (
-  user &&
-  user.access_level === "ADMIN"
-) {
-  return (
-    <AdminDashboard
-      user={user}
-      logout={logout}
-    />
-  );
-}
+
+  /* ADMIN */
+
+  if (
+    user &&
+    user.access_level === "ADMIN"
+  ) {
+    return (
+      <AdminDashboard
+        user={user}
+        logout={logout}
+      />
+    );
+  }
+
+
+  /* USUÁRIO NORMAL */
+
   if (user) {
     return (
       <main className="logged-page">
@@ -152,17 +159,23 @@ if (
           </p>
 
           <div className="user-data">
+
             <div>
               <span>E-mail</span>
-              <strong>{user.email}</strong>
+
+              <strong>
+                {user.email}
+              </strong>
             </div>
 
             <div>
               <span>Tipo de conta</span>
+
               <strong>
                 {user.access_level}
               </strong>
             </div>
+
           </div>
 
           <button
@@ -179,10 +192,15 @@ if (
   }
 
 
+  /* LOGIN / CADASTRO */
+
   return (
     <main className="auth-page">
 
       <section className="auth-container">
+
+
+        {/* LADO ESQUERDO */}
 
         <div className="auth-left">
 
@@ -193,8 +211,10 @@ if (
           <h1>
             O que você sente
             <br />
+
             também pode inspirar
             <br />
+
             suas escolhas.
           </h1>
 
@@ -203,16 +223,94 @@ if (
             de acordo com seu humor.
           </p>
 
+
+          {/* EMOJIS DOS HUMORES */}
+
           <div className="moods">
-            <span className="mood yellow"></span>
-            <span className="mood blue"></span>
-            <span className="mood purple"></span>
-            <span className="mood green"></span>
-            <span className="mood red"></span>
+
+            <div className="mood-emoji-card">
+
+              <span className="mood-emoji">
+                😊
+              </span>
+
+              <small>
+                Alegria
+              </small>
+
+            </div>
+
+
+            <div className="mood-emoji-card">
+
+              <span className="mood-emoji">
+                😌
+              </span>
+
+              <small>
+                Calma
+              </small>
+
+            </div>
+
+
+            <div className="mood-emoji-card">
+
+              <span className="mood-emoji">
+                😡
+              </span>
+
+              <small>
+                Raiva
+              </small>
+
+            </div>
+
+
+            <div className="mood-emoji-card">
+
+              <span className="mood-emoji">
+                🤩
+              </span>
+
+              <small>
+                Criatividade
+              </small>
+
+            </div>
+
+
+            <div className="mood-emoji-card">
+
+              <span className="mood-emoji">
+                🌱
+              </span>
+
+              <small>
+                Esperança
+              </small>
+
+            </div>
+
+
+            <div className="mood-emoji-card">
+
+              <span className="mood-emoji">
+                ⚡
+              </span>
+
+              <small>
+                Vitalidade
+              </small>
+
+            </div>
+
           </div>
 
         </div>
 
+
+        {/* LADO DIREITO */}
 
         <div className="auth-right">
 
@@ -220,24 +318,33 @@ if (
             Shopfeel
           </div>
 
+
           <div className="form-container">
 
             <span className="eyebrow">
+
               {mode === "login"
                 ? "ACESSO"
                 : "NOVA CONTA"}
+
             </span>
 
+
             <h2>
+
               {mode === "login"
                 ? "Bem-vindo de volta"
                 : "Criar conta"}
+
             </h2>
 
+
             <p className="description">
+
               {mode === "login"
                 ? "Entre para continuar no ShopFeel."
                 : "Crie sua conta para começar a descobrir produtos."}
+
             </p>
 
 
@@ -249,9 +356,14 @@ if (
               }
             >
 
+
               {mode === "register" && (
+
                 <label className="field">
-                  <span>Nome</span>
+
+                  <span>
+                    Nome
+                  </span>
 
                   <input
                     type="text"
@@ -261,12 +373,17 @@ if (
                       setName(event.target.value)
                     }
                   />
+
                 </label>
+
               )}
 
 
               <label className="field">
-                <span>E-mail</span>
+
+                <span>
+                  E-mail
+                </span>
 
                 <input
                   type="email"
@@ -276,11 +393,15 @@ if (
                     setEmail(event.target.value)
                   }
                 />
+
               </label>
 
 
               <label className="field">
-                <span>Senha</span>
+
+                <span>
+                  Senha
+                </span>
 
                 <input
                   type="password"
@@ -290,13 +411,18 @@ if (
                     setPassword(event.target.value)
                   }
                 />
+
               </label>
 
 
               {message && (
+
                 <div className="message">
+
                   {message}
+
                 </div>
+
               )}
 
 
@@ -304,11 +430,13 @@ if (
                 className="primary-button"
                 disabled={loading}
               >
+
                 {loading
                   ? "Aguarde..."
                   : mode === "login"
                   ? "Entrar"
                   : "Criar minha conta"}
+
               </button>
 
             </form>
@@ -317,14 +445,19 @@ if (
             <div className="change-mode">
 
               <span>
+
                 {mode === "login"
                   ? "Ainda não possui uma conta?"
                   : "Já possui uma conta?"}
+
               </span>
+
 
               <button
                 type="button"
+
                 onClick={() => {
+
                   setMessage("");
 
                   setMode(
@@ -332,11 +465,14 @@ if (
                       ? "register"
                       : "login"
                   );
+
                 }}
               >
+
                 {mode === "login"
                   ? "Criar conta"
                   : "Entrar"}
+
               </button>
 
             </div>
