@@ -155,11 +155,12 @@ export default function AdminDashboard({ user, logout }) {
             )}
 
             {page === "products" && (
-              <ProductsPage
-                products={products}
-                onRefresh={loadData}
-              />
-            )}
+  <ProductsPage
+    products={products}
+    moods={moods}
+    onRefresh={loadData}
+  />
+)}
 
             {page === "users" && (
               <UsersPage
@@ -174,12 +175,11 @@ export default function AdminDashboard({ user, logout }) {
             )}
 
             {page === "curation" && (
-              <EmptyPage
-                kicker="RECOMENDAÇÕES"
-                title="Curadoria humor → produto"
-                text="Aqui vamos relacionar os produtos cadastrados aos humores do ShopFeel."
-              />
-            )}
+  <CurationPage
+    moods={moods}
+    products={products}
+  />
+)}
 
           </>
         )}
@@ -332,11 +332,34 @@ function Dashboard({
 
 function ProductsPage({
   products,
+  moods,
   onRefresh,
 }) {
   const [showForm, setShowForm] =
     useState(false);
+const [recommendations, setRecommendations] =
+  useState([]);
 
+useEffect(() => {
+  loadRecommendations();
+}, []);
+
+async function loadRecommendations() {
+  try {
+    const data = await apiRequest(
+      "/api/admin/recommendations"
+    );
+
+    setRecommendations(
+      data.recommendations || []
+    );
+  } catch (error) {
+    console.error(
+      "Erro ao carregar recomendações:",
+      error
+    );
+  }
+}
   const [
     editingProduct,
     setEditingProduct,
@@ -728,6 +751,8 @@ function ProductsPage({
 
       <ProductsTable
         products={products}
+        moods={moods}
+        recommendations={recommendations}
         onEdit={openEditProduct}
         onRefresh={onRefresh}
       />
@@ -1185,6 +1210,8 @@ function ProductsPage({
 
 function ProductsTable({
   products,
+  moods,
+  recommendations,
   onEdit,
   onRefresh,
 }) {
@@ -1254,6 +1281,10 @@ function ProductsTable({
     canEdit ||
     canChangeStatus;
 
+  const showMoods =
+    Array.isArray(moods) &&
+    Array.isArray(recommendations);
+
 
   return (
     <div className="admin-table-wrapper">
@@ -1276,6 +1307,12 @@ function ProductsTable({
               Preço
             </th>
 
+            {showMoods && (
+              <th>
+                Humores
+              </th>
+            )}
+
             <th>
               Status
             </th>
@@ -1294,8 +1331,23 @@ function ProductsTable({
         <tbody>
 
           {products.map(
-            (product) => (
+            (product) => {
+              const productMoods = showMoods
+                ? moods.filter(
+                    (mood) =>
+                      recommendations.some(
+                        (recommendation) =>
+                          Number(
+                            recommendation.product_id
+                          ) === Number(product.id) &&
+                          Number(
+                            recommendation.mood_id
+                          ) === Number(mood.id)
+                      )
+                  )
+                : [];
 
+              return (
               <tr
                 key={
                   product.id
@@ -1363,6 +1415,44 @@ function ProductsTable({
                   )}
 
                 </td>
+
+
+                {showMoods && (
+                  <td>
+                    <div className="product-moods">
+
+                      {productMoods.length > 0 ? (
+
+                        productMoods.map(
+                          (mood) => (
+
+                            <span
+                              key={mood.id}
+                              className="product-mood-tag"
+                            >
+                              <span>
+                                {getMoodEmoji(
+                                  mood.mood_name
+                                )}
+                              </span>
+
+                              {mood.mood_name}
+                            </span>
+
+                          )
+                        )
+
+                      ) : (
+
+                        <span className="product-no-mood">
+                          Sem indicação
+                        </span>
+
+                      )}
+
+                    </div>
+                  </td>
+                )}
 
 
                 <td>
@@ -1442,8 +1532,8 @@ function ProductsTable({
                 )}
 
               </tr>
-
-            )
+              );
+            }
           )}
 
         </tbody>
@@ -1467,7 +1557,590 @@ function ProductsTable({
 /* ========================================
    USUÁRIOS
 ======================================== */
+function CurationPage({
+  moods,
+  products,
+}) {
+  const [selectedMoodId, setSelectedMoodId] =
+    useState(moods[0]?.id || null);
 
+  const [selectedProducts, setSelectedProducts] =
+    useState([]);
+
+  const [savedProducts, setSavedProducts] =
+    useState([]);
+
+  const [loadingCuration, setLoadingCuration] =
+    useState(false);
+
+  const [savingCuration, setSavingCuration] =
+    useState(false);
+
+  const [curationMessage, setCurationMessage] =
+    useState("");
+
+
+  const activeProducts = products.filter(
+    (product) =>
+      Number(product.is_active) === 1
+  );
+
+
+  const selectedMood = moods.find(
+    (mood) =>
+      Number(mood.id) ===
+      Number(selectedMoodId)
+  );
+
+
+  useEffect(() => {
+    if (!selectedMoodId) {
+      return;
+    }
+
+    loadRecommendations(
+      selectedMoodId
+    );
+  }, [selectedMoodId]);
+
+
+  async function loadRecommendations(
+    moodId
+  ) {
+    try {
+      setLoadingCuration(true);
+      setCurationMessage("");
+
+      const data =
+        await apiRequest(
+          `/api/admin/recommendations?mood_id=${moodId}`
+        );
+
+
+      const ids =
+        (
+          data.recommendations ||
+          []
+        ).map(
+          (recommendation) =>
+            Number(
+              recommendation.product_id
+            )
+        );
+
+
+      setSelectedProducts(ids);
+      setSavedProducts(ids);
+
+    } catch (error) {
+
+      setCurationMessage(
+        error.message ||
+          "Não foi possível carregar a curadoria."
+      );
+
+    } finally {
+
+      setLoadingCuration(false);
+
+    }
+  }
+
+
+  function selectMood(moodId) {
+    setSelectedMoodId(
+      Number(moodId)
+    );
+
+    setCurationMessage("");
+  }
+
+
+  function toggleProduct(productId) {
+    const id =
+      Number(productId);
+
+    const alreadySelected =
+      selectedProducts.includes(id);
+
+
+    if (alreadySelected) {
+
+      setSelectedProducts(
+        selectedProducts.filter(
+          (currentId) =>
+            currentId !== id
+        )
+      );
+
+      setCurationMessage("");
+
+      return;
+    }
+
+
+    if (
+      selectedProducts.length >= 4
+    ) {
+
+      setCurationMessage(
+        "Você pode selecionar no máximo 4 produtos para cada humor."
+      );
+
+      return;
+    }
+
+
+    setSelectedProducts([
+      ...selectedProducts,
+      id,
+    ]);
+
+    setCurationMessage("");
+  }
+
+
+  async function saveCuration() {
+    if (!selectedMoodId) {
+      setCurationMessage(
+        "Selecione um humor."
+      );
+
+      return;
+    }
+
+
+    if (
+      selectedProducts.length === 0
+    ) {
+      setCurationMessage(
+        "Selecione pelo menos um produto."
+      );
+
+      return;
+    }
+
+
+    try {
+      setSavingCuration(true);
+      setCurationMessage("");
+
+
+      const currentSet =
+        new Set(
+          selectedProducts
+        );
+
+      const savedSet =
+        new Set(
+          savedProducts
+        );
+
+
+      const productsToAdd =
+        selectedProducts.filter(
+          (productId) =>
+            !savedSet.has(
+              productId
+            )
+        );
+
+
+      const productsToRemove =
+        savedProducts.filter(
+          (productId) =>
+            !currentSet.has(
+              productId
+            )
+        );
+
+
+      const addRequests =
+        productsToAdd.map(
+          (productId) =>
+            apiRequest(
+              "/api/admin/recommendations",
+              {
+                method: "POST",
+
+                body: JSON.stringify({
+                  product_id:
+                    Number(
+                      productId
+                    ),
+
+                  mood_id:
+                    Number(
+                      selectedMoodId
+                    ),
+                }),
+              }
+            )
+        );
+
+
+      const removeRequests =
+        productsToRemove.map(
+          (productId) =>
+            apiRequest(
+              `/api/admin/recommendations/${selectedMoodId}/${productId}`,
+              {
+                method:
+                  "DELETE",
+              }
+            )
+        );
+
+
+      await Promise.all([
+        ...addRequests,
+        ...removeRequests,
+      ]);
+
+
+      setSavedProducts([
+        ...selectedProducts,
+      ]);
+
+
+      setCurationMessage(
+        "Curadoria salva com sucesso."
+      );
+
+    } catch (error) {
+
+      setCurationMessage(
+        error.message ||
+          "Não foi possível salvar a curadoria."
+      );
+
+    } finally {
+
+      setSavingCuration(false);
+
+    }
+  }
+
+
+  return (
+    <>
+
+      <PageHeader
+        kicker="RECOMENDAÇÕES"
+        title="Curadoria"
+        description="Escolha um humor e relacione até 4 produtos que combinam com ele."
+      />
+
+
+      <div className="curation-layout">
+
+
+        {/* HUMORES */}
+
+        <section className="curation-moods">
+
+          <span className="admin-section-label">
+            1. Escolha o humor
+          </span>
+
+
+          <div className="curation-mood-grid">
+
+            {moods.map(
+              (mood) => (
+
+                <button
+                  type="button"
+
+                  key={
+                    mood.id
+                  }
+
+                  className={
+                    Number(
+                      selectedMoodId
+                    ) ===
+                    Number(
+                      mood.id
+                    )
+                      ? "curation-mood-button selected"
+                      : "curation-mood-button"
+                  }
+
+                  onClick={() =>
+                    selectMood(
+                      mood.id
+                    )
+                  }
+                >
+
+                  <span className="curation-emoji">
+                    {getMoodEmoji(
+                      mood.mood_name
+                    )}
+                  </span>
+
+                  <strong>
+                    {
+                      mood.mood_name
+                    }
+                  </strong>
+
+                </button>
+
+              )
+            )}
+
+          </div>
+
+        </section>
+
+
+        {/* PRODUTOS */}
+
+        <section className="curation-products">
+
+          <div className="curation-products-header">
+
+            <div>
+
+              <span className="admin-section-label">
+                2. Escolha os produtos
+              </span>
+
+              <h3>
+                {selectedMood
+                  ? `${getMoodEmoji(
+                      selectedMood.mood_name
+                    )} ${selectedMood.mood_name}`
+                  : "Selecione um humor"}
+              </h3>
+
+            </div>
+
+
+            <div className="curation-counter">
+
+              <strong>
+                {
+                  selectedProducts.length
+                }
+              </strong>
+
+              <span>
+                / 4 produtos
+              </span>
+
+            </div>
+
+          </div>
+
+
+          {loadingCuration ? (
+
+            <div className="curation-empty">
+              Carregando produtos...
+            </div>
+
+          ) : activeProducts.length === 0 ? (
+
+            <div className="curation-empty">
+              Nenhum produto ativo cadastrado.
+            </div>
+
+          ) : (
+
+            <div className="curation-product-grid">
+
+              {activeProducts.map(
+                (product) => {
+
+                  const selected =
+                    selectedProducts.includes(
+                      Number(
+                        product.id
+                      )
+                    );
+
+
+                  return (
+                    <button
+                      type="button"
+
+                      key={
+                        product.id
+                      }
+
+                      className={
+                        selected
+                          ? "curation-product-card selected"
+                          : "curation-product-card"
+                      }
+
+                      onClick={() =>
+                        toggleProduct(
+                          product.id
+                        )
+                      }
+                    >
+
+                      <div className="curation-product-image">
+
+                        {product.image_url ? (
+
+                          <img
+                            src={
+                              product.image_url
+                            }
+
+                            alt={
+                              product.name
+                            }
+                          />
+
+                        ) : getStoreLogo(
+                            product.store_key
+                          ) ? (
+
+                          <img
+                            src={
+                              getStoreLogo(
+                                product.store_key
+                              )
+                            }
+
+                            alt={
+                              product.store_name
+                            }
+
+                            className="curation-store-image"
+                          />
+
+                        ) : (
+
+                          <span>
+                            🛍️
+                          </span>
+
+                        )}
+
+                      </div>
+
+
+                      <div className="curation-product-info">
+
+                        <strong>
+                          {
+                            product.name
+                          }
+                        </strong>
+
+                        <span>
+                          {
+                            product.store_name
+                          }
+                        </span>
+
+                        <small>
+                          {formatPrice(
+                            product.price_cents
+                          )}
+                        </small>
+
+                      </div>
+
+
+                      <span
+                        className={
+                          selected
+                            ? "curation-check selected"
+                            : "curation-check"
+                        }
+                      >
+
+                        {selected
+                          ? "✓"
+                          : ""}
+
+                      </span>
+
+                    </button>
+                  );
+                }
+              )}
+
+            </div>
+
+          )}
+
+
+          {curationMessage && (
+
+            <div
+              className={
+                curationMessage.includes(
+                  "sucesso"
+                )
+                  ? "curation-message success"
+                  : "curation-message"
+              }
+            >
+              {curationMessage}
+            </div>
+
+          )}
+
+
+          <div className="curation-footer">
+
+            <div>
+
+              <span>
+                {
+                  selectedProducts.length
+                } produto(s) selecionado(s)
+              </span>
+
+              <small>
+                Esses produtos aparecerão
+                no mobile quando o usuário
+                escolher esse humor.
+              </small>
+
+            </div>
+
+
+            <button
+              type="button"
+
+              className="save-product-button"
+
+              disabled={
+                savingCuration ||
+                selectedProducts.length ===
+                  0
+              }
+
+              onClick={
+                saveCuration
+              }
+            >
+
+              {savingCuration
+                ? "Salvando..."
+                : "Salvar curadoria"}
+
+            </button>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </>
+  );
+}
 function UsersPage({
   customers,
 }) {
@@ -1778,4 +2451,89 @@ function getStoreLogo(storeKey) {
   return (
     logos[storeKey] || null
   );
+}
+function getMoodEmoji(moodName) {
+  const name =
+    String(
+      moodName || ""
+    ).toLowerCase();
+
+
+  if (
+    name.includes("alegr") ||
+    name.includes("feliz")
+  ) {
+    return "😊";
+  }
+
+
+  if (
+    name.includes("calma") ||
+    name.includes("tranquil")
+  ) {
+    return "😌";
+  }
+
+
+  if (
+    name.includes("raiva") ||
+    name.includes("irrit")
+  ) {
+    return "😠";
+  }
+
+
+  if (
+    name.includes("triste")
+  ) {
+    return "😢";
+  }
+
+
+  if (
+    name.includes("criativ")
+  ) {
+    return "🤩";
+  }
+
+
+  if (
+    name.includes("esperan")
+  ) {
+    return "🌱";
+  }
+
+
+  if (
+    name.includes("vital") ||
+    name.includes("energia")
+  ) {
+    return "⚡";
+  }
+
+
+  if (
+    name.includes("amor") ||
+    name.includes("rom")
+  ) {
+    return "🥰";
+  }
+
+
+  if (
+    name.includes("ansied") ||
+    name.includes("ansios")
+  ) {
+    return "😰";
+  }
+
+
+  if (
+    name.includes("surpres")
+  ) {
+    return "😮";
+  }
+
+
+  return "🙂";
 }
