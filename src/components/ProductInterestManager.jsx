@@ -6,9 +6,17 @@ const categories = [
   ["Tecnologia", "💻 Tecnologia"],
   ["Moda", "👕 Moda"],
   ["Beleza", "✨ Beleza"],
-  ["Casa", "🏠 Casa"],
+  ["Casa", "🏠 Casa & Conforto"],
   ["Livros", "📚 Livros"],
-  ["Games", "🎮 Games"],
+  ["Games", "🎮 Games & Desafios"],
+  ["Arte & Criatividade", "🎨 Arte & Criatividade"],
+  ["Papelaria & Escrita", "✏️ Papelaria & Escrita"],
+  ["Organização", "🗂️ Organização & Produtividade"],
+  ["Lazer & Passeios", "🧺 Lazer & Passeios"],
+  ["Bem-estar & Relaxamento", "😌 Bem-estar & Relaxamento"],
+  ["Natureza & Plantas", "🌱 Natureza & Plantas"],
+  ["Fotografia & Memórias", "📷 Fotografia & Memórias"],
+  ["Presentes & Afeto", "🎁 Presentes & Afeto"],
 ];
 
 export default function ProductInterestManager() {
@@ -88,7 +96,7 @@ export default function ProductInterestManager() {
                 <span style={styles.kicker}>PERSONALIZAÇÃO</span>
                 <h2 style={styles.title}>Categorias de interesse</h2>
                 <p style={styles.description}>
-                  Defina a categoria de cada produto. Essa informação é usada no mobile para filtrar as recomendações conforme os interesses escolhidos pelo usuário.
+                  Defina a categoria que melhor representa cada produto. O ShopFeel cruza essa informação com os interesses escolhidos pelo usuário para deixar as recomendações mais personalizadas.
                 </p>
               </div>
 
@@ -143,7 +151,7 @@ export default function ProductInterestManager() {
             )}
 
             <div style={styles.tip}>
-              <strong>Dica:</strong> tente classificar todos os produtos ativos para que o filtro de interesses fique mais preciso.
+              <strong>Dica:</strong> use a categoria principal do produto. Por exemplo: planner em Organização, quebra-cabeça em Games, manta em Casa e mini tripé em Fotografia & Memórias.
             </div>
           </section>
         </div>
@@ -256,7 +264,7 @@ const styles = {
     color: "#7D756D",
   },
   select: {
-    minWidth: 190,
+    minWidth: 230,
     border: "1px solid #DED5CA",
     borderRadius: 10,
     padding: "10px 12px",
