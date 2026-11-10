@@ -1,4 +1,8 @@
-const API_URL = "http://localhost:3000";
+// A URL pública é definida no build do Azure (VITE_API_URL).
+// Em desenvolvimento, o painel continua usando o backend local.
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:3000"
+).replace(/\/$/, "");
 
 const fieldLabels = {
   name: "Nome",
